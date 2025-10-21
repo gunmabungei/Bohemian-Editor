@@ -1,5 +1,5 @@
 export interface OverlayEvent {
-    onModalOpen: () => void;
-    onModalClose: () => void;
-    refreshComponent: () => void;
+	onModalOpen: () => void
+	onModalClose: () => void
+	refreshComponent: () => void
 }

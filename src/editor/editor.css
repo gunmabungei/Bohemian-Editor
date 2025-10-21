@@ -1,10 +1,10 @@
 /* Scoped to the editor */
 
 .articleField {
-    text-align: left;
-    flex: 1;
-    overflow: auto;
-    border-bottom: double 1px var(--app-shell-border-color);
-    padding-bottom: 0;
-    margin-bottom: 0;
+	text-align: left;
+	flex: 1;
+	overflow: auto;
+	border-bottom: double 1px var(--app-shell-border-color);
+	padding-bottom: 0;
+	margin-bottom: 0;
 }

@@ -54,8 +54,12 @@
     "vite": "^7.0.4"
   },
   "prettier": {
+    "trailingComma": "es5",
     "tabWidth": 4,
+    "useTabs": true,
     "singleQuote": true,
-    "jsxSingleQuote": true
+    "jsxSingleQuote": true,
+    "semi": false,
+    "arrowParens": "avoid"
   }
 }
