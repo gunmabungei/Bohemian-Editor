@@ -1,10 +1,10 @@
-import { FileInput, Space, Textarea } from '@mantine/core'
-import type { Tabs } from './AddWorks.tsx'
+import { FileInput, Space, Textarea, Tabs } from '@mantine/core'
+import type { TabKeys } from './AddWorks.tsx'
 
 type AddWorksFormProps = {
 	onChangeTabs: (tabs: string | null) => void
 	setFormValue: (value: FormData) => void
-	tabs: Tabs
+	tabs: TabKeys
 	formValues: FormData
 }
 
