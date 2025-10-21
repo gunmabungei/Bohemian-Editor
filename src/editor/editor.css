@@ -2,7 +2,7 @@
 
 .articleField {
     text-align: left;
-    flex:1;
+    flex: 1;
     overflow: auto;
     border-bottom: double 1px var(--app-shell-border-color);
     padding-bottom: 0;
