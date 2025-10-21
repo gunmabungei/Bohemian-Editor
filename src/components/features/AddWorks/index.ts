@@ -1,1 +1,1 @@
-export * from './AddWorks'
+export * from './AddWorks';
