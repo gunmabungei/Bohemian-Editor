@@ -1,5 +1,4 @@
-import { Button, FileInput, Group, Image, Modal, Stack } from '@mantine/core'
-import DnDList from '../editor/DnDList.tsx'
+import { Button, FileInput, Group, Image, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 export default function UploadImageModal() {

@@ -1,6 +1,6 @@
 import './App.css'
 
-import { AppShell, createTheme, Group, MantineProvider } from '@mantine/core'
+import { AppShell, createTheme, MantineProvider } from '@mantine/core'
 import JournalProps from './journal'
 import Tabbar from './Tabbar.tsx'
 import { ExportModal } from './journal/ExportModal.tsx'

@@ -1,5 +1,5 @@
 import { useDisclosure } from '@mantine/hooks'
-import { Modal, Overlay, Button } from '@mantine/core'
+import { Overlay } from '@mantine/core'
 import { useEffect } from 'react'
 
 export default function PendingScreen(props: { open: boolean }) {

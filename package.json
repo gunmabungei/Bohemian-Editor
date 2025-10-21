@@ -60,6 +60,7 @@
     "singleQuote": true,
     "jsxSingleQuote": true,
     "semi": false,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "endOfLine": "crlf"
   }
 }

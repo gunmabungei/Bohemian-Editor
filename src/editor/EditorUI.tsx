@@ -1,6 +1,6 @@
 import '../App.css'
 
-import { createTheme, MantineProvider, AppShell, Group } from '@mantine/core'
+import { AppShell, createTheme, Group, MantineProvider } from '@mantine/core'
 import { WorksList } from './WorksList.tsx'
 import { UploadModal } from './modal/UploadModal.tsx'
 import { SortModal } from './modal/SortModal.tsx'
@@ -8,7 +8,7 @@ import Editor from './Editor.tsx'
 import { useDisclosure } from '@mantine/hooks'
 import Tabbar from '../Tabbar.tsx'
 import { RemoveModal } from './modal/RemoveModal.tsx'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PendingScreen from './PendingScreen.tsx'
 

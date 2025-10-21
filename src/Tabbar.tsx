@@ -1,4 +1,4 @@
-import { Tabs, Text, Menu } from '@mantine/core'
+import { Menu, Tabs, Text } from '@mantine/core'
 import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import NewJournal from './file/modal/NewJournal.tsx'
@@ -17,10 +17,12 @@ export default function Tabbar(props: { refreshCompontent: () => void }) {
 		isModalOpen = false
 	}
 	let isModalOpen: boolean = false
+
 	function changeMenu(b: boolean) {
 		if (isModalOpen) return
 		else setValue(b)
 	}
+
 	const ref = useClickOutside(() => changeMenu(false))
 	const [value, setValue] = useState(false)
 	const [journalName, setJournalName] = useState('')
