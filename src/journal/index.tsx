@@ -1,17 +1,14 @@
 import {
+	Fieldset,
 	Group,
+	Image,
+	NativeSelect,
 	Radio,
+	Space,
 	Stack,
+	Switch,
 	Text,
 	TextInput,
-	Fieldset,
-	NativeSelect,
-	Switch,
-	Container,
-	Grid,
-	FileInput,
-	Image,
-	Space,
 } from '@mantine/core'
 import { useState } from 'react'
 import UploadImageModal from './UploadImageModal.tsx'

@@ -1,5 +1,5 @@
 import { useDisclosure } from '@mantine/hooks'
-import { Modal, Button, Container } from '@mantine/core'
+import { Button, Modal } from '@mantine/core'
 import DnDList from '../DnDList.tsx'
 
 export function RemoveModal() {

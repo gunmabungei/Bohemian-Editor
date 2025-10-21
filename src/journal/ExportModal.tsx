@@ -1,14 +1,5 @@
 import { useDisclosure } from '@mantine/hooks'
-import {
-	Modal,
-	Button,
-	Container,
-	Stack,
-	Text,
-	Checkbox,
-	Flex,
-	Grid,
-} from '@mantine/core'
+import { Button, Checkbox, Grid, Modal, Stack, Text } from '@mantine/core'
 import ExportButton from './ExportButton.tsx'
 
 export function ExportModal() {

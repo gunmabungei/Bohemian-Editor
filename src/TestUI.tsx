@@ -1,5 +1,4 @@
 import { DocxMerger } from '@spfxappdev/docxmerger'
-import { useParams } from 'react-router-dom'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 

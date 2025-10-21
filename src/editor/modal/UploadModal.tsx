@@ -1,8 +1,8 @@
 import { useDisclosure } from '@mantine/hooks'
-import { Modal, Button } from '@mantine/core'
+import { Button, Modal } from '@mantine/core'
 import { AddWorks } from '../../components/features/AddWorks'
-import { useState } from 'react'
 import * as React from 'react'
+import { useState } from 'react'
 
 export type UploadProgress = 'pending' | 'complete' | 'none'
 
