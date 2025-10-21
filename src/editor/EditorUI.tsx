@@ -11,6 +11,9 @@ import { RemoveModal } from './modal/RemoveModal.tsx'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PendingScreen from './PendingScreen.tsx'
+import type { Works } from '../types/Works.ts'
+import { fetchAllWorks, fetchWorks } from '../api/fetchWorks.ts'
+import { updateWorks } from '../api/saveWorks.ts'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -19,19 +22,7 @@ const theme = createTheme({
 	headings: { fontFamily: 'Outfit, sans-serif' },
 })
 
-export type Works = {
-	id: number
-	title: string
-	author: string
-	pages: string
-	body: string
-	postscript: string
-}
-
-type IWorks = Works & { index: number }
-
 const worksPending: Works = {
-	id: 1,
 	body: 'loading...',
 	postscript: 'loading...',
 	author: 'loading...',
@@ -46,62 +37,34 @@ export default function EditorUI() {
 	const [onPending, setOnPending] = useState(false)
 	const params = useParams()
 
-	const buttonTriggered = (id: number) => {
+	const journal_name = params.journal_name ?? ''
+
+	const handleWorksSelected = (id: number) => {
 		loadWorksList()
 		setSelector(id - 1)
 	}
-
 	function editWorks(works: Works) {
 		setWorksList(worksList.map((c, i) => (i == selector ? works : c)))
 	}
-
 	useEffect(() => {
-		const fetchId = worksList[selector].id
+		const fetchId = selector
 		setOnPending(true)
 		loadWorksList()
-		fetch(`${API_BASE_URL}/journal/${params.journal_name}/works/${fetchId}`)
-			.then(response => response.json())
-			.then((data: IWorks) => {
-				setWorksList(
-					worksList.map((c, i) => {
-						return i === data.index - 1 ? data : c
-					})
-				)
-			})
+		fetchWorks(fetchId)
+			.then((data: Works) =>
+				setWorksList(worksList.map(c => (c.id === fetchId ? data : c)))
+			)
 			.catch(error => console.error('Fetching data failed', error))
 	}, [])
 
-	const saveChanges = () => {
-		fetch(
-			`${API_BASE_URL}/journal/${params.journal_name}/works/${worksList[selector].id}`,
-			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(worksList[selector]),
-			}
-		).then(response => console.log(response))
-	}
+	const saveChanges = updateWorks(worksList[selector], {
+		journal: journal_name,
+		index: selector,
+	})
 
 	function loadWorksList() {
-		fetch(`${API_BASE_URL}/journal/works_list/${params.journal_name}`)
-			.then(response => response.json())
-			.then(data => {
-				data = data
-					.filter((x: IWorks) => x.id != null)
-					.map((x: IWorks) => {
-						x.pages = 'xxx'
-						return x
-					})
-					.map((x: IWorks) => {
-						return { ...x, index: Number(x.index) }
-					})
-					.map((x: IWorks) => {
-						return { ...x, id: Number(x.id) }
-					})
-				setWorksList(
-					data.sort((a: IWorks, b: IWorks) => a.index > b.index)
-				)
-			})
+		fetchAllWorks(journal_name ?? 'test')
+			.then(data => setWorksList(data))
 			.then(() => setOnPending(false))
 			.catch(error => console.error('Fetching data failed', error))
 	}
@@ -130,7 +93,7 @@ export default function EditorUI() {
 
 					<AppShell.Navbar display='flex' p='md'>
 						<WorksList
-							onClickedButton={buttonTriggered}
+							onClickedButton={handleWorksSelected}
 							works={worksList}
 							selection={selector}
 						/>

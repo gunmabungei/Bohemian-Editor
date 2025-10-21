@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "load-db-schema": "supabase gen types typescript --project-id aeindejecicwuecbnoiu > ./api/database.types.ts"
   },
   "dependencies": {
     "@codemirror/commands": "^6.8.1",
@@ -20,6 +21,8 @@
     "@mantine/modals": "^8.2.2",
     "@mantine/tiptap": "^8.2.2",
     "@spfxappdev/docxmerger": "^1.0.3",
+    "@supabase/postgrest-js": "^2.76.1",
+    "@supabase/supabase-js": "^2.76.1",
     "@tabler/icons-react": "^3.34.1",
     "@tiptap/extension-link": "^3.0.9",
     "@tiptap/extension-text-style": "^3.0.9",
@@ -35,9 +38,7 @@
     "postcss-simple-vars": "^7.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^7.7.1",
-    "thememirror": "^2.0.1"
+    "react-router-dom": "^7.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

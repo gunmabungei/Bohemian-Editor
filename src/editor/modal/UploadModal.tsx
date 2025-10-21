@@ -7,6 +7,7 @@ import { useState } from 'react'
 export type UploadProgress = 'pending' | 'complete' | 'none'
 
 export function UploadModal() {
+	const [progress, setProgress] = useState<UploadProgress>('none')
 	const [opened, { open, close }] = useDisclosure(false)
 	const progressMap: Record<UploadProgress, UploadProgress> = {
 		none: 'pending',
@@ -14,7 +15,6 @@ export function UploadModal() {
 		complete: 'none',
 	}
 	const nextProgress = () => setProgress(progressMap[progress])
-	const [progress, setProgress] = useState<UploadProgress>('none')
 	const handleOpen = () => {
 		setProgress('none')
 		open()
