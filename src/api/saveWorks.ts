@@ -1,4 +1,4 @@
-import { Client } from './Client.ts'
+import { Supabase } from './Supabase.ts'
 import type { Works } from '@/types/Works.ts'
 import type { Database } from './database.types.ts'
 
@@ -15,7 +15,7 @@ export async function updateWorks(
 			index: ctx.index,
 		}
 	}
-	const { error } = await Client.from('works')
+	const { error } = await Supabase.from('works')
 		.update(toEntity(data))
 		.eq('id', data.id)
 	if (error) throw error
