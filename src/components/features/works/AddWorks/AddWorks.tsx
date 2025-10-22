@@ -1,12 +1,11 @@
-import { Tabs } from '@mantine/core'
 import { useState } from 'react'
 import { submitForm } from './submitForm.ts'
 import { useParams } from 'react-router-dom'
-import { AddWorksForm } from './AddWorksForm.tsx'
 import { CommonArea } from './CommonArea.tsx'
-import type { Works } from '../../../types/Works.ts'
+import type { Works } from '@/types/Works.ts'
+import { BodyUploadArea } from './BodyUploadArea.tsx'
 
-export type FormParam = Works & { files?: File[] }
+export type WorksForm = Omit<Works, 'id'> & { files?: File[] }
 export type TabKeys = 'fileInput' | 'textInput'
 
 type AddWorksProps = { onSubmit: () => void; onComplete: () => void }
@@ -14,7 +13,7 @@ type AddWorksProps = { onSubmit: () => void; onComplete: () => void }
 export const AddWorks = ({ onSubmit, onComplete }: AddWorksProps) => {
 	const param = useParams()
 	const [tabs, setTabs] = useState<TabKeys>('textInput')
-	const [values, setValues] = useState<FormParam>({
+	const [formData, setFormData] = useState<WorksForm>({
 		files: undefined,
 		body: '',
 		title: '',
@@ -23,24 +22,27 @@ export const AddWorks = ({ onSubmit, onComplete }: AddWorksProps) => {
 	})
 	const handleClick = () => {
 		onSubmit()
-		submitForm(param.journal_name ?? 'test', values).then(onComplete)
+		submitForm(param.journal_name ?? 'test', formData).then(onComplete)
 	}
 	const handleChanges = (tabs: string | null) => {
 		if (tabs === 'fileInput' || tabs === 'textInput') {
-			setValues({ ...values, files: undefined })
+			setFormData({ ...formData, files: undefined })
 			setTabs(tabs)
 		}
 	}
 	return (
 		<>
-			<AddWorksForm
+			<BodyUploadArea
 				tabs={tabs}
-				onSubmit={handleClick}
 				onChangeTabs={handleChanges}
-				formValues={values}
-				setFormValue={setValues}
+				formValues={formData}
+				setFormValue={setFormData}
 			/>
-			<CommonArea formValues={values} onSubmit={handleClick} />
+			<CommonArea
+				formValues={formData}
+				setFormValue={setFormData}
+				onSubmit={handleClick}
+			/>
 		</>
 	)
 }

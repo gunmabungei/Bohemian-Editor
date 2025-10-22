@@ -1,8 +1,8 @@
 import { useDisclosure } from '@mantine/hooks'
 import { Button, Modal } from '@mantine/core'
-import DnDList from '../DnDList.tsx'
+import DnDList from '@/components/features/works/SortWorks/DnDList.tsx'
 
-export function SortModal() {
+export function RemoveModal() {
 	const [opened, { open, close }] = useDisclosure(false)
 
 	return (
@@ -11,7 +11,7 @@ export function SortModal() {
 				opened={opened}
 				onClose={close}
 				size='md'
-				title='作品を並び替え'
+				title='作品を削除する'
 			>
 				<DnDList />
 			</Modal>
@@ -22,8 +22,9 @@ export function SortModal() {
 				w='fit-content'
 				mt={'auto'}
 				radius={0}
+				color='pink'
 			>
-				並び替え
+				削除
 			</Button>
 		</>
 	)

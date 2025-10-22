@@ -1,16 +1,16 @@
 import ReactCodeMirror from '@uiw/react-codemirror'
-import './editor.css'
 import { EditorView } from '@codemirror/view'
 import { Button, Group, Stack, TextInput } from '@mantine/core'
-import type { Works } from './EditorUI'
+import type { Works } from '@/types/Works.ts'
+import './editor.css'
 
-export default function Editor(props: {
+export default function TextEditor(props: {
 	works: Works
 	editWorks: (works: Works) => void
 	onSave: () => void
 }) {
 	return (
-		<Stack w='100%' h='100%' justify='flex-start' gap='0'>
+		<>
 			<ReactCodeMirror
 				value={props.works.body}
 				onChange={body =>
@@ -20,6 +20,7 @@ export default function Editor(props: {
 				theme='light'
 				className='articleField'
 				height='100%'
+				width='100%'
 			/>
 			<Stack
 				bg={'#e7e7e7'}
@@ -70,6 +71,6 @@ export default function Editor(props: {
 					</Button>
 				</Group>
 			</Stack>
-		</Stack>
+		</>
 	)
 }

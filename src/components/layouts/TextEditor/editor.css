@@ -1,0 +1,9 @@
+/* Scoped to the editor */
+
+.articleField {
+    text-align: left;
+    overflow: auto;
+    border-bottom: double 1px var(--app-shell-border-color);
+    padding-bottom: 0;
+    margin-bottom: 0;
+}

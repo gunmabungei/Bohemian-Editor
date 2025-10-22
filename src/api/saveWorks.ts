@@ -1,10 +1,10 @@
 import { Client } from './Client.ts'
-import type { Works } from '.././types/Works.ts'
+import type { Works } from '@/types/Works.ts'
 import type { Database } from './database.types.ts'
 
 type WorksEntity = Database['public']['Tables']['works']['Row']
 
-async function updateWorks(
+export async function updateWorks(
 	data: Works,
 	ctx: { journal: string; index: number }
 ): Promise<void> {
@@ -20,5 +20,3 @@ async function updateWorks(
 		.eq('id', data.id)
 	if (error) throw error
 }
-
-export { updateWorks }

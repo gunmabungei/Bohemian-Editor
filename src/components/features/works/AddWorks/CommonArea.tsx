@@ -1,10 +1,16 @@
 import { Button, Group, Space, TextInput } from '@mantine/core'
+import type { WorksForm } from './AddWorks.tsx'
 
 export type CommonAreaProps = {
-	formValues: FormData
+	formValues: WorksForm
+	setFormValue: (formValues: WorksForm) => void
 	onSubmit: () => void
 }
-export const CommonArea = ({ formValues, onSubmit }: CommonAreaProps) => {
+export const CommonArea = ({
+	formValues,
+	onSubmit,
+	setFormValue,
+}: CommonAreaProps) => {
 	return (
 		<>
 			<TextInput

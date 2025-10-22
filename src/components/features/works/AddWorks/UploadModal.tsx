@@ -1,6 +1,6 @@
 import { useDisclosure } from '@mantine/hooks'
 import { Button, Modal } from '@mantine/core'
-import { AddWorks } from '../../components/features/AddWorks'
+import { AddWorks } from './index.ts'
 import * as React from 'react'
 import { useState } from 'react'
 
