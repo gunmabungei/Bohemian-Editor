@@ -9,7 +9,7 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useState } from 'react'
-import type { OverlayEvent } from './OverlayEvent.ts'
+import type { OverlayEvent } from '../../../common/OverlayEvent.ts'
 
 export type ModalClose = {
 	closeModal: () => void

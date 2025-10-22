@@ -1,8 +1,8 @@
 import { Menu, Tabs, Text } from '@mantine/core'
 import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import NewJournal from './file/modal/NewJournal.tsx'
-import SelectJournal from './file/modal/SelectJournal.tsx'
+import NewJournal from '../../components/features/journal/NewJournal/NewJournal.tsx'
+import SelectJournal from '../../components/layouts/JournalList/SelectJournal.tsx'
 import { useClickOutside } from '@mantine/hooks'
 
 export default function Tabbar(props: { refreshCompontent: () => void }) {

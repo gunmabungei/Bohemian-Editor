@@ -1,19 +1,19 @@
-import { FileInput, Space, Textarea, Tabs } from '@mantine/core'
-import type { TabKeys } from './AddWorks.tsx'
+import { FileInput, Space, Tabs, Textarea } from '@mantine/core'
+import type { TabKeys, WorksForm } from './AddWorks.tsx'
 
-type AddWorksFormProps = {
+type BodyUploadAreaProps = {
 	onChangeTabs: (tabs: string | null) => void
-	setFormValue: (value: FormData) => void
+	formValues: WorksForm
+	setFormValue: (value: WorksForm) => void
 	tabs: TabKeys
-	formValues: FormData
 }
 
-export const AddWorksForm = ({
+export const BodyUploadArea = ({
 	onChangeTabs,
 	setFormValue,
 	tabs,
 	formValues,
-}: AddWorksFormProps) => {
+}: BodyUploadAreaProps) => {
 	return (
 		<>
 			<Tabs defaultValue='textInput' onChange={onChangeTabs} value={tabs}>
@@ -31,7 +31,7 @@ export const AddWorksForm = ({
 						multiple
 						value={formValues.files}
 						onChange={(files: File[]) => {
-							setValues({ ...formValues, files: files })
+							setFormValue({ ...formValues, files: files })
 						}}
 					/>
 				</Tabs.Panel>

@@ -1,9 +1,9 @@
 import { Button, Stack, Text } from '@mantine/core'
-import type { Works } from './EditorUI'
+import type { Works } from '@/types/Works.ts'
 
 export function WorksList(props: {
 	works: Works[]
-	onClickedButton: (id: number) => void
+	onSelectedWorks: (id: number) => void
 	selection: number
 }) {
 	const titleElem = (title: string) => {
@@ -33,13 +33,13 @@ export function WorksList(props: {
 			props.works.map(x => (
 				<Button
 					h={50}
-					variant={props.selection + 1 === x.id ? 'light' : 'outline'}
+					variant={props.selection === x.id ? 'light' : 'outline'}
 					color='gray'
 					radius='xs'
 					justify='space-between'
-					rightSection={authorElem(x.author, x.pages)}
+					rightSection={authorElem(x.author, x.author)}
 					key={x.id}
-					onClick={() => props.onClickedButton(x.id)}
+					onClick={() => props.onSelectedWorks(x.id)}
 				>
 					<Text c={'black'}>{titleElem(x.title)}</Text>
 				</Button>

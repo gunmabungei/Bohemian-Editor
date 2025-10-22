@@ -1,9 +1,9 @@
-import type { FormParam } from './AddWorks.tsx'
+import type { WorksForm } from './AddWorks.tsx'
 import readFiles from './readFiles.ts'
 import type { SendData } from './SendData.ts'
-import { uploadWorks } from '@lib/HttpRequest'
+import { uploadWorks } from '@/api'
 
-export const submitForm = async (journal_name: string, param: FormParam) => {
+export const submitForm = async (journal_name: string, param: WorksForm) => {
 	const onFileInput = async () => {
 		if (param.files === undefined) return
 		const contents = await readFiles(param.files)
@@ -15,12 +15,10 @@ export const submitForm = async (journal_name: string, param: FormParam) => {
 				body: b,
 			}
 		})
-		for (const item of sendData) {
-			await uploadWorks(journal_name, item)
-		}
+		await uploadWorks(sendData, journal_name)
 	}
 	const onTextInput = async () => {
-		await uploadWorks(journal_name, param)
+		await uploadWorks([param], journal_name)
 	}
 	return param.files === undefined ? await onFileInput() : await onTextInput()
 }
