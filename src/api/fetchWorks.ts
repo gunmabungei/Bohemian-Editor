@@ -1,4 +1,4 @@
-import { Client } from './Client.ts'
+import { Supabase } from './Supabase.ts'
 import type { Works } from '.././types/Works.ts'
 import type { Database } from './database.types.ts'
 
@@ -15,8 +15,11 @@ function toWorks(ent: WorksEntity): Works {
 }
 
 const fetchWorks = async (id: number): Promise<Works> => {
-	const { data, error } = await Client.from('works').select('*').eq('id', id)
-	if (error || !data || !data.length) throw error
+	const { data, error } = await Supabase.from('works')
+		.select('*')
+		.eq('id', id)
+	if (error) throw error
+	else if (!data || !data.length) throw ReferenceError
 	return toWorks(data[0])
 }
 
@@ -25,10 +28,11 @@ function sortEntity(ent: WorksEntity[]): WorksEntity[] {
 }
 
 async function fetchAllWorks(journal_name: string): Promise<Works[]> {
-	const { data, error } = await Client.from('works')
+	const { data, error } = await Supabase.from('works')
 		.select('*')
 		.eq('journal', journal_name)
-	if (error || !data || !data.length) throw error
+	if (error) throw error
+	else if (!data || !data.length) return []
 	return sortEntity(data).map(toWorks)
 }
 
