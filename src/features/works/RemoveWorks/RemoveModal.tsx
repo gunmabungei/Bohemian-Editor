@@ -1,8 +1,14 @@
 import { useDisclosure } from '@mantine/hooks'
 import { Button, Modal } from '@mantine/core'
-import DnDList from '@/components/features/works/SortWorks/DnDList.tsx'
+import RemoveList from './RemoveList.tsx'
+import type { Works } from '@/types/Works.ts'
 
-export function RemoveModal() {
+type RemoveModalProps = {
+	worksList: Works[]
+	onDelete: () => void
+}
+
+export function RemoveModal({ worksList, onDelete }: RemoveModalProps) {
 	const [opened, { open, close }] = useDisclosure(false)
 
 	return (
@@ -13,7 +19,11 @@ export function RemoveModal() {
 				size='md'
 				title='作品を削除する'
 			>
-				<DnDList />
+				<RemoveList
+					worksList={worksList}
+					onDelete={onDelete}
+					close={close}
+				/>
 			</Modal>
 
 			<Button

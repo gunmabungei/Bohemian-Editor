@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 export type UploadProgress = 'pending' | 'complete' | 'none'
 
-export function UploadModal() {
+export function UploadModal(props: { hookWorksListUpdate?: () => void }) {
 	const [progress, setProgress] = useState<UploadProgress>('none')
 	const [opened, { open, close }] = useDisclosure(false)
 	const progressMap: Record<UploadProgress, UploadProgress> = {
@@ -22,7 +22,7 @@ export function UploadModal() {
 	const ModalView: Record<UploadProgress, React.ReactNode> = {
 		pending: <>Uploading...</>,
 		complete: <>Upload complete</>,
-		none: <AddWorks onSubmit={nextProgress} onComplete={nextProgress} />,
+		none: <AddWorks onSubmit={nextProgress} onComplete={() => { nextProgress(); props.hookWorksListUpdate?.() }} onCancel={close} />,
 	}
 	return (
 		<>

@@ -1,38 +1,41 @@
 import { Menu, Tabs, Text } from '@mantine/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import NewJournal from '../../components/features/journal/NewJournal/NewJournal.tsx'
+import NewJournal from '@/features/journal/NewJournal/NewJournal.tsx'
 import SelectJournal from '../../components/layouts/JournalList/SelectJournal.tsx'
 import { useClickOutside } from '@mantine/hooks'
 
-export default function Tabbar(props: { refreshCompontent: () => void }) {
+export default function Tabbar(props: { refreshComponent?: () => void }) {
 	const params = useParams()
 	const location = useLocation()
 	const navigate = useNavigate()
+	const [isModalOpen, setIsModalOpen] = useState(false)
+
 	const onModalOpen = () => {
 		setValue(true)
-		isModalOpen = true
+		setIsModalOpen(true)
 	}
 	const onModalClose = () => {
-		isModalOpen = false
-	}
-	let isModalOpen: boolean = false
-
-	function changeMenu(b: boolean) {
-		if (isModalOpen) return
-		else setValue(b)
+		setIsModalOpen(false)
 	}
 
-	const ref = useClickOutside(() => changeMenu(false))
+	const ref = useClickOutside(() => {
+		if (!isModalOpen) setValue(false)
+	})
 	const [value, setValue] = useState(false)
 	const [journalName, setJournalName] = useState('')
 
-	const workingJournal = ''
-	fetch(`http://localhost:3000/journal/props/byname/${params.journal_name}`)
-		.then(res => res.json())
-		.then(props => {
-			setJournalName(props.title)
-		})
+	useEffect(() => {
+		if (!params.journal_name) return
+		fetch(
+			`http://localhost:3000/journal/props/byname/${params.journal_name}`
+		)
+			.then(res => res.json())
+			.then(data => {
+				setJournalName(data.title)
+			})
+			.catch(error => console.error('Fetching data failed', error))
+	}, [params.journal_name])
 
 	return (
 		<>
@@ -51,7 +54,7 @@ export default function Tabbar(props: { refreshCompontent: () => void }) {
 					<Tabs.Tab value='journal'>部誌</Tabs.Tab>
 				</Tabs.List>
 			</Tabs>
-			<Menu opened={value} onChange={changeMenu}>
+			<Menu opened={value}>
 				<Menu.Dropdown
 					ref={ref}
 					style={{
@@ -61,7 +64,7 @@ export default function Tabbar(props: { refreshCompontent: () => void }) {
 					}}
 				>
 					<NewJournal
-						refreshComponent={props.refreshCompontent}
+						refreshComponent={props.refreshComponent ?? (() => {})}
 						onModalOpen={onModalOpen}
 						onModalClose={onModalClose}
 					/>

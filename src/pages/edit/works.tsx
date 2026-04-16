@@ -1,18 +1,27 @@
 import '../../App.css'
+import '@mantine/notifications/styles.css'
 
-import { AppShell, createTheme, Group, MantineProvider } from '@mantine/core'
+import {
+	AppShell,
+	Button,
+	createTheme,
+	Group,
+	MantineProvider,
+	Text,
+} from '@mantine/core'
+import { Notifications, notifications } from '@mantine/notifications'
 import { WorksList } from '@/components/layouts/WorksList/WorksList.tsx'
-import { UploadModal } from '@/components/features/works/AddWorks/UploadModal.tsx'
-import { SortModal } from '@/components/features/works/SortWorks/SortModal.tsx'
+import { UploadModal } from '@/features/works/AddWorks/UploadModal.tsx'
+import { SortModal } from '@/features/works/SortWorks/SortModal.tsx'
 import TextEditor from '../../components/layouts/TextEditor/TextEditor.tsx'
 import { useDisclosure } from '@mantine/hooks'
 import Tabbar from '../common/Tabbar.tsx'
-import { RemoveModal } from '@/components/features/works/RemoveWorks/RemoveModal.tsx'
-import { useEffect, useState } from 'react'
+import { RemoveModal } from '@/features/works/RemoveWorks/RemoveModal.tsx'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PendingScreen from '../common/PendingScreen.tsx'
 import type { Works } from '@/types/Works.ts'
-import { fetchAllWorks, fetchWorks, updateWorks } from '@/api'
+import { fetchAllWorks, updateWorks } from '@/api'
 
 const theme = createTheme({
 	fontFamily: 'Yu Gothic, sans-serif',
@@ -37,40 +46,100 @@ export default function EditorUI() {
 	const journal_name = params.journal_name ?? ''
 
 	const handleWorksSelected = (id: number) => {
-		loadWorksList()
 		setSelectionId(id)
 	}
 
+	const savedWorksRef = useRef<Works[]>([])
+	const notificationShownRef = useRef(false)
+
 	function editWorks(works: Works) {
-		setWorksList(worksList.map(w => (w.id === selectionId ? works : w)))
+		setWorksList(worksList.map(w => (w.id === works.id ? works : w)))
+		if (!notificationShownRef.current) {
+			notificationShownRef.current = true
+			notifications.show({
+				id: 'unsaved-changes',
+				title: '未保存の変更があります',
+				message: (
+					<Group gap='xs'>
+						<Text size='sm'>変更を保存しますか？</Text>
+						<Button
+							size='xs'
+							variant='filled'
+							onClick={() => {
+								saveChangesRef.current()
+								notifications.hide('unsaved-changes')
+								notificationShownRef.current = false
+							}}
+						>
+							保存
+						</Button>
+						<Button
+							size='xs'
+							variant='default'
+							onClick={() => {
+								cancelChangesRef.current()
+								notifications.hide('unsaved-changes')
+								notificationShownRef.current = false
+							}}
+						>
+							キャンセル
+						</Button>
+					</Group>
+				),
+				autoClose: false,
+				withCloseButton: true,
+				onClose: () => {
+					notificationShownRef.current = false
+				},
+			})
+		}
 	}
+
+	const loadWorksList = () => {
+		setOnPending(true)
+		fetchAllWorks(journal_name)
+			.then(data => {
+				setWorksList(data)
+				savedWorksRef.current = data.map(w => ({ ...w }))
+			})
+			.then(() => setOnPending(false))
+			.catch(error => {
+				console.error('Fetching data failed', error)
+				setOnPending(false)
+			})
+	}
+
+	const cancelChanges = () => {
+		setWorksList(savedWorksRef.current.map(w => ({ ...w })))
+	}
+
+	const cancelChangesRef = useRef(cancelChanges)
+	cancelChangesRef.current = cancelChanges
 
 	useEffect(() => {
-		const fetchId = selectionId
-		setOnPending(true)
 		loadWorksList()
-		fetchWorks(fetchId)
-			.then((data: Works) =>
-				setWorksList(worksList.map(c => (c.id === fetchId ? data : c)))
-			)
-			.catch(error => console.error('Fetching data failed', error))
-	}, [])
+	}, [journal_name])
 
-	const saveChanges = () =>
-		updateWorks(worksList[selectionId], {
+	const selectedWorks = worksList.find(w => w.id === selectionId) ?? worksList[0]
+
+	const saveChanges = () => {
+		if (!selectedWorks) return
+		const index = worksList.findIndex(w => w.id === selectedWorks.id)
+		updateWorks(selectedWorks, {
 			journal: journal_name,
-			index: selectionId,
+			index: index,
 		})
-
-	function loadWorksList() {
-		fetchAllWorks(journal_name ?? 'test')
-			.then(data => setWorksList(data))
-			.then(() => setOnPending(false))
-			.catch(error => console.error('Fetching data failed', error))
+		notifications.hide('unsaved-changes')
+		notificationShownRef.current = false
+		savedWorksRef.current = [...worksList]
 	}
+
+	const saveChangesRef = useRef(saveChanges)
+	saveChangesRef.current = saveChanges
 
 	return (
 		<MantineProvider theme={theme}>
+			<Notifications position='top-right' />
 			<PendingScreen open={onPending} />
 			<AppShell
 				header={{ height: 60 }}
@@ -87,34 +156,42 @@ export default function EditorUI() {
 						justifyContent: 'flex-end',
 					}}
 				>
-					<Tabbar />
+					<Tabbar refreshComponent={loadWorksList} />
 				</AppShell.Header>
 
-				<AppShell.Navbar display='flex' p='md'>
+				<AppShell.Navbar
+					p='md'
+					style={{ display: 'flex', flexDirection: 'column' }}
+				>
 					<WorksList
 						onSelectedWorks={handleWorksSelected}
 						works={worksList}
 						selection={selectionId}
 					/>
-					<Group
-						mt={'auto'}
-						gap='6px'
-						grow
-						w={'320'}
-						style={{ position: 'fixed', bottom: 10 }}
-					>
+					<Group mt='md' gap='6px' grow>
 						<UploadModal hookWorksListUpdate={loadWorksList} />
-						<RemoveModal />
-						<SortModal />
+						<RemoveModal worksList={worksList} onDelete={loadWorksList} />
+						<SortModal worksList={worksList} onSort={loadWorksList} />
 					</Group>
 				</AppShell.Navbar>
 
-				<AppShell.Main>
-					<TextEditor
-						works={worksList[selectionId]}
-						onSave={saveChanges}
-						editWorks={editWorks}
-					/>
+				<AppShell.Main
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						height: '100vh',
+					}}
+				>
+					{selectedWorks ? (
+						<TextEditor
+							works={selectedWorks}
+							editWorks={editWorks}
+						/>
+					) : (
+						<Text p='xl' c='dimmed'>
+							原稿がありません。「追加」ボタンから原稿を追加してください。
+						</Text>
+					)}
 				</AppShell.Main>
 			</AppShell>
 		</MantineProvider>

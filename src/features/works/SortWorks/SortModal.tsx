@@ -1,8 +1,14 @@
 import { useDisclosure } from '@mantine/hooks'
 import { Button, Modal } from '@mantine/core'
 import DnDList from './DnDList.tsx'
+import type { Works } from '@/types/Works.ts'
 
-export function SortModal() {
+type SortModalProps = {
+	worksList: Works[]
+	onSort: () => void
+}
+
+export function SortModal({ worksList, onSort }: SortModalProps) {
 	const [opened, { open, close }] = useDisclosure(false)
 
 	return (
@@ -13,7 +19,7 @@ export function SortModal() {
 				size='md'
 				title='作品を並び替え'
 			>
-				<DnDList />
+				<DnDList worksList={worksList} onSort={onSort} close={close} />
 			</Modal>
 
 			<Button

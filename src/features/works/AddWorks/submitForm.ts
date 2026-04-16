@@ -20,5 +20,5 @@ export const submitForm = async (journal_name: string, param: WorksForm) => {
 	const onTextInput = async () => {
 		await uploadWorks([param], journal_name)
 	}
-	return param.files === undefined ? await onFileInput() : await onTextInput()
+	return param.files !== undefined ? await onFileInput() : await onTextInput()
 }

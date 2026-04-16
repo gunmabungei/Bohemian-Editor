@@ -9,7 +9,7 @@ function toWorks(ent: WorksEntity): Works {
 		...ent,
 		body: ent.body ?? '',
 		title: ent.title ?? '',
-		author: ent.title ?? '',
+		author: ent.author ?? '',
 		postscript: ent.postscript ?? '',
 	}
 }
@@ -19,7 +19,7 @@ const fetchWorks = async (id: number): Promise<Works> => {
 		.select('*')
 		.eq('id', id)
 	if (error) throw error
-	else if (!data || !data.length) throw ReferenceError
+	else if (!data || !data.length) throw new ReferenceError('Works not found')
 	return toWorks(data[0])
 }
 
