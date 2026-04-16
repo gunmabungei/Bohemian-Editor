@@ -9,24 +9,25 @@ export default function ExportButton() {
 		fetch(`http://localhost:3000/journal/${params.journal_name}/docx`)
 			.then(res => res.json())
 			.then(allworks => {
-				const binarray = allworks.map(elem => Object.values(elem))
-				console.log(binarray)
+				const binarray = allworks.map(
+					(elem: Record<string, unknown>) => Object.values(elem)
+				)
 				return docx.merge(Object.values(binarray))
 			})
 			.then(() => docx.save())
 			.then((ab: ArrayBuffer) => {
 				const url = window.URL.createObjectURL(new Blob([ab]))
-				// リンクを作成してダウンロードをトリガー
 				const link = document.createElement('a')
 				link.href = url
-				link.download = 'example.docx' // ダウンロードするファイル名
+				link.download = `${params.journal_name ?? 'journal'}.docx`
 				document.body.appendChild(link)
 				link.click()
-
-				// リンクを削除
 				document.body.removeChild(link)
-				window.URL.revokeObjectURL(url) // メモリを解放
+				window.URL.revokeObjectURL(url)
 			})
+			.catch(error =>
+				console.error('Export failed', error)
+			)
 	}
 
 	return (

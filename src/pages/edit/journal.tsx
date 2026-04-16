@@ -1,7 +1,9 @@
 import '../../App.css'
+import '@mantine/notifications/styles.css'
 
 import {
 	AppShell,
+	Button,
 	createTheme,
 	Group,
 	Image,
@@ -10,71 +12,192 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
+import { Notifications, notifications } from '@mantine/notifications'
 import Tabbar from '../common/Tabbar.tsx'
-import { ExportModal } from '@/components/features/works/ExportWorks/ExportModal.tsx'
+import { ExportModal } from '@/features/works/ExportWorks/ExportModal.tsx'
+import JournalConfig from '@/components/layouts/JournalConfig/JournalConfig.tsx'
+import UploadImageModal from '@/features/journal/UploadImages/UploadImageModal.tsx'
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Journal } from '@/types/Journal.ts'
+import { saveChanges as saveJournalChanges } from '@/components/layouts/JournalConfig/saveChanges.ts'
 
 const theme = createTheme({
 	fontFamily: 'Yu Gothic, sans-serif',
 	headings: { fontFamily: 'Outfit, sans-serif' },
 })
 
-export default function Journal() {
-	const journalName = useParams().journalName
-	const [journal, setJournal] = useState<Journal>()
+const defaultJournal: Journal = {
+	type: 'bohemian',
+	season: null,
+	id: 0,
+	title: '',
+	cover_url: null,
+	backcover_url: null,
+	publish_date: new Date(),
+	publisher: { name: '', grade: 1, department: 'M' },
+}
+
+export default function JournalPage() {
+	const params = useParams()
+	const journalName = params.journal_name ?? ''
+	const [journal, setJournalRaw] = useState<Journal>(defaultJournal)
+	const notificationShownRef = useRef(false)
+	const loadedRef = useRef(false)
+	const savedJournalRef = useRef<Journal>(defaultJournal)
+	const journalRef = useRef(journal)
+	journalRef.current = journal
+
+	const setJournal = (j: Journal) => {
+		setJournalRaw(j)
+		if (loadedRef.current && !notificationShownRef.current) {
+			notificationShownRef.current = true
+			notifications.show({
+				id: 'unsaved-journal',
+				title: '未保存の変更があります',
+				message: (
+					<Group gap='xs'>
+						<Text size='sm'>変更を保存しますか？</Text>
+						<Button
+							size='xs'
+							variant='filled'
+							onClick={() => {
+								saveJournalChanges(journalName, journalRef.current)
+								notifications.hide('unsaved-journal')
+								notificationShownRef.current = false
+							}}
+						>
+							保存
+						</Button>
+						<Button
+							size='xs'
+							variant='default'
+							onClick={() => {
+								setJournalRaw({ ...savedJournalRef.current })
+								notifications.hide('unsaved-journal')
+								notificationShownRef.current = false
+							}}
+						>
+							キャンセル
+						</Button>
+					</Group>
+				),
+				autoClose: false,
+				withCloseButton: true,
+				onClose: () => {
+					notificationShownRef.current = false
+				},
+			})
+		}
+	}
+
 	useEffect(() => {
-		fetch(`http://localhost:3000/journal/id/${journalName}`)
+		if (!journalName) return
+		fetch(`http://localhost:3000/journal/props/byname/${journalName}`)
 			.then(response => response.json())
-			.then(data => setJournal(data))
+			.then(data => {
+				if (data && data.title) {
+					const j: Journal =
+						data.category === 1
+							? {
+									type: 'onepiecepuzzle',
+									volume: 1,
+									TTSelection: false,
+									id: data.id,
+									title: data.title,
+									cover_url: data.cover_url,
+									backcover_url: data.backcover_url,
+									publish_date: new Date(
+										data.publish_year ?? 2025,
+										(data.publish_month ?? 1) - 1,
+										data.publish_day ?? 1
+									),
+									publisher: { name: '', grade: 1, department: 'M' },
+								}
+							: {
+									type: 'bohemian',
+									season: null,
+									id: data.id,
+									title: data.title,
+									cover_url: data.cover_url,
+									backcover_url: data.backcover_url,
+									publish_date: new Date(
+										data.publish_year ?? 2025,
+										(data.publish_month ?? 1) - 1,
+										data.publish_day ?? 1
+									),
+									publisher: { name: '', grade: 1, department: 'M' },
+								}
+					setJournalRaw(j)
+					savedJournalRef.current = { ...j }
+					loadedRef.current = true
+				}
+			})
 			.catch(error => console.error('Fetching data failed', error))
-	}, [])
+	}, [journalName])
+
 	return (
-		<>
-			<MantineProvider theme={theme}>
-				<AppShell header={{ height: 60 }}>
-					<AppShell.Header
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'center',
-						}}
-					>
-						<Tabbar refreshCompontent={setJournal} />
-					</AppShell.Header>
-					<AppShell.Main
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							margin: 'auto',
-							paddingTop: 60,
-						}}
-						maw={'520px'}
-					>
-						<Group>
-							<Stack align={'flex-start'}>
-								<Space h='1em' />
-								<Image
-									src='https://placehold.net/400x400.png'
-									w='200'
-									p='0'
-									m='0'
-								/>
-								<Text>表紙イメージ</Text>
-								<Image
-									src='https://placehold.net/400x400.png'
-									w='200'
-									p='0'
-									m='0'
-								/>
-								<Text>背表紙イメージ</Text>
-							</Stack>
-						</Group>
-						<ExportModal />
-					</AppShell.Main>
-				</AppShell>
-			</MantineProvider>
-		</>
+		<MantineProvider theme={theme}>
+			<Notifications position='top-right' />
+			<AppShell header={{ height: 60 }}>
+				<AppShell.Header
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+					}}
+				>
+					<Tabbar refreshComponent={() => {}} />
+				</AppShell.Header>
+				<AppShell.Main
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						margin: 'auto',
+						paddingTop: 60,
+					}}
+					maw={'520px'}
+				>
+					<Group align='flex-start' gap='xl' wrap='nowrap'>
+						{journal.title ? (
+							<JournalConfig
+								journal={journal}
+								setJournal={setJournal}
+							/>
+						) : (
+							<Text>読み込み中...</Text>
+						)}
+						<Stack align='flex-start'>
+							<Space h='1em' />
+							<Image
+								src={journal.cover_url ?? 'https://placehold.net/400x400.png'}
+								w='200'
+							/>
+							<Text size='sm'>表紙イメージ</Text>
+							<UploadImageModal
+								label='表紙画像をアップロード'
+								folder='covers'
+								onUploaded={url =>
+									setJournal({ ...journal, cover_url: url })
+								}
+							/>
+							<Image
+								src={journal.backcover_url ?? 'https://placehold.net/400x400.png'}
+								w='200'
+							/>
+							<Text size='sm'>裏表紙イメージ</Text>
+							<UploadImageModal
+								label='裏表紙画像をアップロード'
+								folder='backcovers'
+								onUploaded={url =>
+									setJournal({ ...journal, backcover_url: url })
+								}
+							/>
+						</Stack>
+					</Group>
+					<ExportModal />
+				</AppShell.Main>
+			</AppShell>
+		</MantineProvider>
 	)
 }

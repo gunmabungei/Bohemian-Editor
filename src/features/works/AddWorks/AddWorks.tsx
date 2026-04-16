@@ -8,9 +8,9 @@ import { BodyUploadArea } from './BodyUploadArea.tsx'
 export type WorksForm = Omit<Works, 'id'> & { files?: File[] }
 export type TabKeys = 'fileInput' | 'textInput'
 
-type AddWorksProps = { onSubmit: () => void; onComplete: () => void }
+type AddWorksProps = { onSubmit: () => void; onComplete: () => void; onCancel?: () => void }
 
-export const AddWorks = ({ onSubmit, onComplete }: AddWorksProps) => {
+export const AddWorks = ({ onSubmit, onComplete, onCancel }: AddWorksProps) => {
 	const param = useParams()
 	const [tabs, setTabs] = useState<TabKeys>('textInput')
 	const [formData, setFormData] = useState<WorksForm>({
@@ -22,7 +22,7 @@ export const AddWorks = ({ onSubmit, onComplete }: AddWorksProps) => {
 	})
 	const handleClick = () => {
 		onSubmit()
-		submitForm(param.journal_name ?? 'test', formData).then(onComplete)
+		submitForm(param.journal_name ?? '', formData).then(onComplete)
 	}
 	const handleChanges = (tabs: string | null) => {
 		if (tabs === 'fileInput' || tabs === 'textInput') {
@@ -42,6 +42,7 @@ export const AddWorks = ({ onSubmit, onComplete }: AddWorksProps) => {
 				formValues={formData}
 				setFormValue={setFormData}
 				onSubmit={handleClick}
+				onCancel={onCancel}
 			/>
 		</>
 	)

@@ -1,6 +1,6 @@
 import { useDisclosure } from '@mantine/hooks'
 import { Menu, Modal } from '@mantine/core'
-import JournalList from '../../features/journal/JournalList/JournalList.tsx'
+import JournalList from '@/features/journal/JournalList/JournalList.tsx'
 import type { OverlayEvent } from '../../common/OverlayEvent.ts'
 
 export default function SelectJournal(props: OverlayEvent) {

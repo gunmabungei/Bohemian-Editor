@@ -5,11 +5,13 @@ export type CommonAreaProps = {
 	formValues: WorksForm
 	setFormValue: (formValues: WorksForm) => void
 	onSubmit: () => void
+	onCancel?: () => void
 }
 export const CommonArea = ({
 	formValues,
 	onSubmit,
 	setFormValue,
+	onCancel,
 }: CommonAreaProps) => {
 	return (
 		<>
@@ -44,7 +46,7 @@ export const CommonArea = ({
 			/>
 			<Space h='sm'></Space>
 			<Group justify={'flex-end'}>
-				<Button variant='outline' color='pink'>
+				<Button variant='outline' color='pink' onClick={onCancel}>
 					取消
 				</Button>
 				<Button variant='outline' color='lime' onClick={onSubmit}>

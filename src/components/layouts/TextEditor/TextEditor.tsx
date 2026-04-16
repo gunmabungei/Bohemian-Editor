@@ -1,16 +1,16 @@
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { EditorView } from '@codemirror/view'
-import { Button, Group, Stack, TextInput } from '@mantine/core'
+import { Group, Stack, Text, TextInput, Textarea } from '@mantine/core'
 import type { Works } from '@/types/Works.ts'
 import './editor.css'
 
 export default function TextEditor(props: {
 	works: Works
 	editWorks: (works: Works) => void
-	onSave: () => void
 }) {
 	return (
-		<>
+		<Stack gap={0} style={{ flex: 1, minHeight: 0 }}>
+			{/* 本文エディタ */}
 			<ReactCodeMirror
 				value={props.works.body}
 				onChange={body =>
@@ -22,55 +22,83 @@ export default function TextEditor(props: {
 				height='100%'
 				width='100%'
 			/>
-			<Stack
-				bg={'#e7e7e7'}
-				gap='0'
-				pr='1em'
-				pb='0.5em'
-				pl='1em'
-				m='0'
+
+			{/* メタ情報 */}
+			<Group
+				gap='sm'
+				px='sm'
+				py='6px'
+				align='flex-end'
+				wrap='nowrap'
 				style={{
-					textAlign: 'left',
-					justifyContent: '',
+					borderTop: '1px solid var(--mantine-color-gray-3)',
 				}}
 			>
-				<TextInput
-					value={props.works.postscript}
-					onChange={postscript =>
-						props.editWorks({
-							...props.works,
-							postscript: postscript.target.value,
-						})
-					}
-					label='あとがき'
-					w='100%'
-				/>
-				<Group style={{ textAlign: 'left' }} grow w='100%'>
+				<Stack gap={0} style={{ flex: 1 }}>
+					<Text size='10px' c='dimmed' fw={500}>タイトル</Text>
 					<TextInput
 						value={props.works.title}
-						onChange={title =>
+						onChange={e =>
 							props.editWorks({
 								...props.works,
-								title: title.target.value,
+								title: e.target.value,
 							})
 						}
-						label='タイトル'
+						size='sm'
+						variant='unstyled'
+						styles={{
+							input: {
+								fontWeight: 600,
+								borderBottom: '1px solid var(--mantine-color-gray-3)',
+								borderRadius: 0,
+							},
+						}}
 					/>
+				</Stack>
+				<Stack gap={0} style={{ flexGrow: 0, flexShrink: 0, width: '10em' }}>
+					<Text size='10px' c='dimmed' fw={500}>ペンネーム</Text>
 					<TextInput
 						value={props.works.author}
-						onChange={author =>
+						onChange={e =>
 							props.editWorks({
 								...props.works,
-								author: author.target.value,
+								author: e.target.value,
 							})
 						}
-						label='ペンネーム'
+						size='sm'
+						variant='unstyled'
+						styles={{
+							input: {
+								borderBottom: '1px solid var(--mantine-color-gray-3)',
+								borderRadius: 0,
+							},
+						}}
 					/>
-					<Button mt='1.6em' variant='default' onClick={props.onSave}>
-						保存
-					</Button>
-				</Group>
-			</Stack>
-		</>
+				</Stack>
+				<Stack gap={0} style={{ flex: 1 }}>
+					<Text size='10px' c='dimmed' fw={500}>あとがき</Text>
+					<Textarea
+						value={props.works.postscript}
+						onChange={e =>
+							props.editWorks({
+								...props.works,
+								postscript: e.target.value,
+							})
+						}
+						size='sm'
+						variant='unstyled'
+						autosize
+						minRows={1}
+						maxRows={2}
+						styles={{
+							input: {
+								borderBottom: '1px solid var(--mantine-color-gray-3)',
+								borderRadius: 0,
+							},
+						}}
+					/>
+				</Stack>
+			</Group>
+		</Stack>
 	)
 }
