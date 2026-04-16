@@ -31,7 +31,10 @@ export default function UploadImageModal({
 		const fileName = `${folder}/${Date.now()}-${file.name}`
 		const { data } = await Supabase.storage.from('images').upload(fileName, file)
 		if (data?.path) {
-			onUploaded?.(data.path)
+			const { data: urlData } = Supabase.storage
+				.from('images')
+				.getPublicUrl(data.path)
+			onUploaded?.(urlData.publicUrl)
 		}
 		close()
 	}

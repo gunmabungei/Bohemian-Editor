@@ -147,9 +147,36 @@ export default function JournalConfig({
 			</Fieldset>
 
 			<Group>
-				<NativeSelect label='発行年' data={variables.years} />
-				<NativeSelect label='月' data={variables.months} />
-				<NativeSelect label='日' data={variables.days} />
+				<NativeSelect
+					label='発行年'
+					data={variables.years}
+					value={String(journal.publish_date.getFullYear())}
+					onChange={e => {
+						const d = new Date(journal.publish_date)
+						d.setFullYear(Number(e.target.value))
+						setJournal({ ...journal, publish_date: d })
+					}}
+				/>
+				<NativeSelect
+					label='月'
+					data={variables.months}
+					value={String(journal.publish_date.getMonth() + 1)}
+					onChange={e => {
+						const d = new Date(journal.publish_date)
+						d.setMonth(Number(e.target.value) - 1)
+						setJournal({ ...journal, publish_date: d })
+					}}
+				/>
+				<NativeSelect
+					label='日'
+					data={variables.days}
+					value={String(journal.publish_date.getDate())}
+					onChange={e => {
+						const d = new Date(journal.publish_date)
+						d.setDate(Number(e.target.value))
+						setJournal({ ...journal, publish_date: d })
+					}}
+				/>
 			</Group>
 		</Stack>
 	)

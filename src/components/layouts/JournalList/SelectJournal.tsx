@@ -16,7 +16,7 @@ export default function SelectJournal(props: OverlayEvent) {
 				}}
 				title='部誌を選択'
 			>
-				<JournalList refreshComponent={props.refreshComponent} />
+				<JournalList onSelect={() => { props.onModalClose(); close() }} />
 			</Modal>
 
 			<Menu.Item

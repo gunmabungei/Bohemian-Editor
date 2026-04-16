@@ -22,6 +22,8 @@ import { useEffect, useRef, useState } from 'react'
 import type { Journal } from '@/types/Journal.ts'
 import { saveChanges as saveJournalChanges } from '@/components/layouts/JournalConfig/saveChanges.ts'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
 const theme = createTheme({
 	fontFamily: 'Yu Gothic, sans-serif',
 	headings: { fontFamily: 'Outfit, sans-serif' },
@@ -93,40 +95,42 @@ export default function JournalPage() {
 
 	useEffect(() => {
 		if (!journalName) return
-		fetch(`http://localhost:3000/journal/props/byname/${journalName}`)
+		fetch(`${API_BASE_URL}/journal/props/byname/${journalName}`)
 			.then(response => response.json())
 			.then(data => {
 				if (data && data.title) {
+					const publishDate = new Date(
+						data.publish_year ?? 2025,
+						(data.publish_month ?? 1) - 1,
+						data.publish_day ?? 1
+					)
+					const publisher = {
+						name: data.publisher_name ?? '',
+						grade: (data.publisher_grade ?? 1) as 1 | 2 | 3 | 4 | 5,
+						department: (data.publisher_department ?? 'M') as 'M' | 'E' | 'J' | 'K' | 'C' | 'AP' | 'AE',
+					}
 					const j: Journal =
 						data.category === 1
 							? {
 									type: 'onepiecepuzzle',
-									volume: 1,
-									TTSelection: false,
+									volume: data.volume ?? 1,
+									TTSelection: data.tt_selection ?? false,
 									id: data.id,
 									title: data.title,
 									cover_url: data.cover_url,
 									backcover_url: data.backcover_url,
-									publish_date: new Date(
-										data.publish_year ?? 2025,
-										(data.publish_month ?? 1) - 1,
-										data.publish_day ?? 1
-									),
-									publisher: { name: '', grade: 1, department: 'M' },
+									publish_date: publishDate,
+									publisher,
 								}
 							: {
 									type: 'bohemian',
-									season: null,
+									season: data.season ?? null,
 									id: data.id,
 									title: data.title,
 									cover_url: data.cover_url,
 									backcover_url: data.backcover_url,
-									publish_date: new Date(
-										data.publish_year ?? 2025,
-										(data.publish_month ?? 1) - 1,
-										data.publish_day ?? 1
-									),
-									publisher: { name: '', grade: 1, department: 'M' },
+									publish_date: publishDate,
+									publisher,
 								}
 					setJournalRaw(j)
 					savedJournalRef.current = { ...j }

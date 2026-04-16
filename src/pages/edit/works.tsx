@@ -123,15 +123,24 @@ export default function EditorUI() {
 	const selectedWorks = worksList.find(w => w.id === selectionId) ?? worksList[0]
 
 	const saveChanges = () => {
-		if (!selectedWorks) return
-		const index = worksList.findIndex(w => w.id === selectedWorks.id)
-		updateWorks(selectedWorks, {
-			journal: journal_name,
-			index: index,
+		const saved = savedWorksRef.current
+		const changedWorks = worksList.filter(w => {
+			const original = saved.find(s => s.id === w.id)
+			if (!original) return true
+			return (
+				w.title !== original.title ||
+				w.author !== original.author ||
+				w.body !== original.body ||
+				w.postscript !== original.postscript
+			)
 		})
+		for (const w of changedWorks) {
+			const index = worksList.findIndex(x => x.id === w.id)
+			updateWorks(w, { journal: journal_name, index })
+		}
 		notifications.hide('unsaved-changes')
 		notificationShownRef.current = false
-		savedWorksRef.current = [...worksList]
+		savedWorksRef.current = worksList.map(w => ({ ...w }))
 	}
 
 	const saveChangesRef = useRef(saveChanges)
