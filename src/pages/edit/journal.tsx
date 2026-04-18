@@ -142,13 +142,7 @@ export default function JournalPage() {
 		<MantineProvider theme={theme}>
 			<Notifications position='top-right' />
 			<AppShell header={{ height: 60 }}>
-				<AppShell.Header
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-					}}
-				>
+				<AppShell.Header>
 					<Tabbar refreshComponent={() => {}} />
 				</AppShell.Header>
 				<AppShell.Main

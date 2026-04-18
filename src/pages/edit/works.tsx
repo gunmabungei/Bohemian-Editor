@@ -158,13 +158,7 @@ export default function EditorUI() {
 					collapsed: { mobile: !opened },
 				}}
 			>
-				<AppShell.Header
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'flex-end',
-					}}
-				>
+				<AppShell.Header>
 					<Tabbar refreshComponent={loadWorksList} />
 				</AppShell.Header>
 

@@ -1,4 +1,4 @@
-import { Menu, Tabs, Text } from '@mantine/core'
+import { Box, Divider, Group, Menu, Stack, Tabs, Text } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import NewJournal from '@/features/journal/NewJournal/NewJournal.tsx'
@@ -43,8 +43,19 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 	}, [params.journal_name])
 
 	return (
-		<>
-			<Text style={{ flex: 1 }}>ぼへみあんエディタで編集中: {journalName}</Text>
+		<Group h='100%' px='md' gap='md' wrap='nowrap'>
+			{/* アプリ名 + 部誌名 */}
+			<Stack gap={2} style={{ minWidth: 0 }}>
+				<Text size='xs' c='dimmed' lh={1}>ぼへみあんエディタ</Text>
+				<Text size='sm' fw={600} lh={1} truncate>
+					{journalName || '　'}
+				</Text>
+			</Stack>
+
+			<Divider orientation='vertical' />
+
+			<Box style={{ flex: 1 }} />
+
 			<Tabs
 				value={location.pathname.split('/')[3]}
 				onChange={v => {
@@ -52,8 +63,9 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 						? navigate(`/edit/${params.journal_name}/${v}`)
 						: setValue(true)
 				}}
+				style={{ alignSelf: 'stretch' }}
 			>
-				<Tabs.List>
+				<Tabs.List style={{ height: '100%' }}>
 					<Tabs.Tab value='file'>ファイル</Tabs.Tab>
 					<Tabs.Tab value='works'>原稿</Tabs.Tab>
 					<Tabs.Tab value='journal'>部誌</Tabs.Tab>
@@ -87,6 +99,6 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 					</Menu.Item>
 				</Menu.Dropdown>
 			</Menu>
-		</>
+		</Group>
 	)
 }
