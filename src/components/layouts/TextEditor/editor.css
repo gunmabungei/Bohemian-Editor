@@ -1,0 +1,12 @@
+/* Scoped to the editor */
+
+.articleField {
+    text-align: left;
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.articleField .cm-editor {
+    height: 100%;
+}
