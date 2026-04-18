@@ -9,8 +9,10 @@ import LoginPage from './pages/LoginPage.tsx'
 import UnauthorizedPage from './pages/UnauthorizedPage.tsx'
 import AuthCallback from './pages/AuthCallback.tsx'
 import { AuthGuard } from './components/AuthGuard.tsx'
+import { MantineProvider } from '@mantine/core'
 
 createRoot(document.getElementById('root')!).render(
+	<MantineProvider>
 	<BrowserRouter>
 		<Routes>
 			<Route path='/login' element={<LoginPage />} />
@@ -23,4 +25,5 @@ createRoot(document.getElementById('root')!).render(
 			<Route path='*' element={<Navigate to='/' replace />} />
 		</Routes>
 	</BrowserRouter>
+	</MantineProvider>
 )
