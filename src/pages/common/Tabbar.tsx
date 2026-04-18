@@ -4,8 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import NewJournal from '@/features/journal/NewJournal/NewJournal.tsx'
 import SelectJournal from '../../components/layouts/JournalList/SelectJournal.tsx'
 import { useClickOutside } from '@mantine/hooks'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { fetchJournalById } from '@/api'
 
 export default function Tabbar(props: { refreshComponent?: () => void }) {
 	const params = useParams()
@@ -29,12 +28,9 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 
 	useEffect(() => {
 		if (!params.journal_name) return
-		fetch(
-			`${API_BASE_URL}/journal/props/byname/${params.journal_name}`
-		)
-			.then(res => res.json())
+		fetchJournalById(params.journal_name)
 			.then(data => {
-				setJournalName(data.title)
+				if (data) setJournalName(data.title)
 			})
 			.catch(error => console.error('Fetching data failed', error))
 	}, [params.journal_name])

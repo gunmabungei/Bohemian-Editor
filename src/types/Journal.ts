@@ -14,7 +14,7 @@ export type OnePiecePuzzle = {
 } & CommonProperty
 
 type CommonProperty = {
-	id: number
+	id: string
 	title: string
 	cover_url: string | null
 	backcover_url: string | null

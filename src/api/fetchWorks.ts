@@ -1,48 +1,39 @@
+import { Supabase } from './Supabase.ts'
 import type { Works } from '.././types/Works.ts'
+import type { Database } from './database.types.ts'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+type WorksEntity = Database['public']['Tables']['works']['Row']
 
-const fetchWorks = async (id: number, journalName: string): Promise<Works> => {
-	const res = await fetch(
-		`${API_BASE_URL}/journal/${journalName}/works/${id}`
-	)
-	if (!res.ok) throw new ReferenceError('Works not found')
-	const data = await res.json()
+function toWorks(ent: WorksEntity): Works {
 	return {
-		id,
-		body: data.body ?? '',
-		title: data.title ?? '',
-		author: data.author ?? '',
-		postscript: data.postscript ?? '',
+		...ent,
+		body: ent.body ?? '',
+		title: ent.title ?? '',
+		author: ent.author ?? '',
+		postscript: ent.postscript ?? '',
 	}
 }
 
-async function fetchAllWorks(journal_name: string): Promise<Works[]> {
-	const res = await fetch(
-		`${API_BASE_URL}/journal/works_list/${journal_name}`
-	)
-	if (!res.ok) return []
-	const data = await res.json()
-	if (!Array.isArray(data) || !data.length) return []
-	return data
-		.sort((a: { index: number }, b: { index: number }) =>
-			a.index > b.index ? 1 : -1
-		)
-		.map(
-			(w: {
-				id: number
-				title?: string
-				author?: string
-				body?: string
-				postscript?: string
-			}) => ({
-				id: w.id,
-				body: w.body ?? '',
-				title: w.title ?? '',
-				author: w.author ?? '',
-				postscript: w.postscript ?? '',
-			})
-		)
+const fetchWorks = async (id: number): Promise<Works> => {
+	const { data, error } = await Supabase.from('works')
+		.select('*')
+		.eq('id', id)
+	if (error) throw error
+	else if (!data || !data.length) throw new ReferenceError('Works not found')
+	return toWorks(data[0])
+}
+
+function sortEntity(ent: WorksEntity[]): WorksEntity[] {
+	return ent.sort((a, b) => (a.index > b.index ? 1 : -1))
+}
+
+async function fetchAllWorks(journal_id: string): Promise<Works[]> {
+	const { data, error } = await Supabase.from('works')
+		.select('*')
+		.eq('journal_id', journal_id)
+	if (error) throw error
+	else if (!data || !data.length) return []
+	return sortEntity(data).map(toWorks)
 }
 
 export { fetchWorks, fetchAllWorks }
