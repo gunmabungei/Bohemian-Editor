@@ -29,8 +29,8 @@ export default function NewJournal(props: OverlayEvent) {
 	const handleCreate = async () => {
 		if (!title || !journalType) return
 		const category = journalType === 'bohe' ? 0 : 1
-		const url_name = title.toLowerCase().replace(/\s+/g, '-')
-		await createJournal({ title, url_name, category })
+		const id = title.toLowerCase().replace(/\s+/g, '-')
+		await createJournal({ title, id, category })
 		props.refreshComponent()
 		handleClose()
 	}

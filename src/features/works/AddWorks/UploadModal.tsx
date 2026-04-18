@@ -14,7 +14,7 @@ export function UploadModal(props: { hookWorksListUpdate?: () => void }) {
 		pending: 'complete',
 		complete: 'none',
 	}
-	const nextProgress = () => setProgress(progressMap[progress])
+	const nextProgress = () => setProgress(prev => progressMap[prev])
 	const handleOpen = () => {
 		setProgress('none')
 		open()

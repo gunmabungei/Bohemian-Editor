@@ -8,13 +8,11 @@ import {
 } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { fetchJournalList } from '@/api'
 
 type JournalEntry = {
 	id: string
 	title: string
-	url_name: string
 }
 
 const theme = createTheme({
@@ -27,8 +25,7 @@ export default function SelectPage() {
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		fetch(`${API_BASE_URL}/journal/list`)
-			.then(res => res.json())
+		fetchJournalList()
 			.then(data => setJournalList(data))
 			.catch(err => console.error('Fetching journal list failed', err))
 	}, [])
@@ -44,7 +41,7 @@ export default function SelectPage() {
 							variant='outline'
 							color='gray'
 							w='300px'
-							onClick={() => navigate(`/edit/${j.url_name}/works`)}
+							onClick={() => navigate(`/edit/${j.id}/works`)}
 						>
 							{j.title}
 						</Button>
