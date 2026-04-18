@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Center, Loader, MantineProvider } from '@mantine/core'
+import { Center, Loader } from '@mantine/core'
 import { Supabase } from '@/api/Supabase.ts'
 
 export default function AuthCallback() {
@@ -18,10 +18,8 @@ export default function AuthCallback() {
 	}, [navigate])
 
 	return (
-		<MantineProvider>
-			<Center h='100vh'>
-				<Loader />
-			</Center>
-		</MantineProvider>
+		<Center h='100vh'>
+			<Loader />
+		</Center>
 	)
 }
