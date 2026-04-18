@@ -1,15 +1,22 @@
-import { Menu, Tabs, Text } from '@mantine/core'
+import { ActionIcon, Menu, Tabs, Text, Tooltip } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import NewJournal from '@/features/journal/NewJournal/NewJournal.tsx'
 import SelectJournal from '../../components/layouts/JournalList/SelectJournal.tsx'
 import { useClickOutside } from '@mantine/hooks'
 import { fetchJournalById } from '@/api'
+import { IconLogout } from '@tabler/icons-react'
+import { signOut } from '@/api/auth.ts'
 
 export default function Tabbar(props: { refreshComponent?: () => void }) {
 	const params = useParams()
 	const location = useLocation()
 	const navigate = useNavigate()
+
+	const handleSignOut = async () => {
+		await signOut()
+		navigate('/login', { replace: true })
+	}
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	const onModalOpen = () => {
@@ -37,7 +44,12 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 
 	return (
 		<>
-			<Text>ぼへみあんエディタで編集中: {journalName}</Text>
+			<Text style={{ flex: 1 }}>ぼへみあんエディタで編集中: {journalName}</Text>
+			<Tooltip label='ログアウト' position='bottom'>
+				<ActionIcon variant='subtle' color='gray' onClick={handleSignOut}>
+					<IconLogout size={18} />
+				</ActionIcon>
+			</Tooltip>
 			<Tabs
 				value={location.pathname.split('/')[3]}
 				onChange={v => {
