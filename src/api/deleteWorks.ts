@@ -1,11 +1,11 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { Supabase } from './Supabase.ts'
 
 export async function deleteWorks(
-	journalName: string,
+	_journalId: string,
 	worksId: number
 ): Promise<void> {
-	await fetch(
-		`${API_BASE_URL}/journal/${journalName}/works/${worksId}`,
-		{ method: 'DELETE' }
-	)
+	const { error } = await Supabase.from('works')
+		.delete()
+		.eq('id', worksId)
+	if (error) throw error
 }

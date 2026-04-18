@@ -21,8 +21,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import type { Journal } from '@/types/Journal.ts'
 import { saveChanges as saveJournalChanges } from '@/components/layouts/JournalConfig/saveChanges.ts'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { fetchJournalById } from '@/api'
 
 const theme = createTheme({
 	fontFamily: 'Yu Gothic, sans-serif',
@@ -32,7 +31,7 @@ const theme = createTheme({
 const defaultJournal: Journal = {
 	type: 'bohemian',
 	season: null,
-	id: 0,
+	id: '',
 	title: '',
 	cover_url: null,
 	backcover_url: null,
@@ -42,7 +41,7 @@ const defaultJournal: Journal = {
 
 export default function JournalPage() {
 	const params = useParams()
-	const journalName = params.journal_name ?? ''
+	const journalId = params.journal_name ?? ''
 	const [journal, setJournalRaw] = useState<Journal>(defaultJournal)
 	const notificationShownRef = useRef(false)
 	const loadedRef = useRef(false)
@@ -64,7 +63,7 @@ export default function JournalPage() {
 							size='xs'
 							variant='filled'
 							onClick={() => {
-								saveJournalChanges(journalName, journalRef.current)
+								saveJournalChanges(journalId, journalRef.current)
 								notifications.hide('unsaved-journal')
 								notificationShownRef.current = false
 							}}
@@ -94,9 +93,8 @@ export default function JournalPage() {
 	}
 
 	useEffect(() => {
-		if (!journalName) return
-		fetch(`${API_BASE_URL}/journal/props/byname/${journalName}`)
-			.then(response => response.json())
+		if (!journalId) return
+		fetchJournalById(journalId)
 			.then(data => {
 				if (data && data.title) {
 					const publishDate = new Date(
@@ -105,16 +103,16 @@ export default function JournalPage() {
 						data.publish_day ?? 1
 					)
 					const publisher = {
-						name: data.publisher_name ?? '',
-						grade: (data.publisher_grade ?? 1) as 1 | 2 | 3 | 4 | 5,
-						department: (data.publisher_department ?? 'M') as 'M' | 'E' | 'J' | 'K' | 'C' | 'AP' | 'AE',
+						name: '',
+						grade: 1 as 1 | 2 | 3 | 4 | 5,
+						department: 'M' as 'M' | 'E' | 'J' | 'K' | 'C' | 'AP' | 'AE',
 					}
 					const j: Journal =
 						data.category === 1
 							? {
 									type: 'onepiecepuzzle',
-									volume: data.volume ?? 1,
-									TTSelection: data.tt_selection ?? false,
+									volume: 1,
+									TTSelection: false,
 									id: data.id,
 									title: data.title,
 									cover_url: data.cover_url,
@@ -124,7 +122,7 @@ export default function JournalPage() {
 								}
 							: {
 									type: 'bohemian',
-									season: data.season ?? null,
+									season: null,
 									id: data.id,
 									title: data.title,
 									cover_url: data.cover_url,
@@ -138,7 +136,7 @@ export default function JournalPage() {
 				}
 			})
 			.catch(error => console.error('Fetching data failed', error))
-	}, [journalName])
+	}, [journalId])
 
 	return (
 		<MantineProvider theme={theme}>

@@ -1,26 +1,23 @@
 import { Button, Stack } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import { fetchJournalList } from '@/api'
 
 type Journal = {
-	id: number
+	id: string
 	title: string
-	url_name: string
 }
 
 export default function JournalList(props: { onSelect?: () => void }) {
 	const [journalList, setJournalList] = useState<Journal[]>([])
 	const navigate = useNavigate()
-	const handleNavigate = (to: string) => {
+	const handleNavigate = (id: string) => {
 		props.onSelect?.()
-		navigate(`/edit/${to}/works`)
+		navigate(`/edit/${id}/works`)
 	}
 
 	useEffect(() => {
-		fetch(`${API_BASE_URL}/journal/list`)
-			.then(response => response.json())
+		fetchJournalList()
 			.then(data => setJournalList(data))
 			.catch(error => console.error('Fetching data failed', error))
 	}, [])
@@ -30,7 +27,7 @@ export default function JournalList(props: { onSelect?: () => void }) {
 			key={x.id}
 			variant='outline'
 			color='gray'
-			onClick={() => handleNavigate(x.url_name)}
+			onClick={() => handleNavigate(x.id)}
 		>
 			{x.title}
 		</Button>
