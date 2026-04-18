@@ -1,4 +1,4 @@
-import { ActionIcon, Menu, Tabs, Text, Tooltip } from '@mantine/core'
+import { Menu, Tabs, Text } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import NewJournal from '@/features/journal/NewJournal/NewJournal.tsx'
@@ -45,11 +45,6 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 	return (
 		<>
 			<Text style={{ flex: 1 }}>ぼへみあんエディタで編集中: {journalName}</Text>
-			<Tooltip label='ログアウト' position='bottom'>
-				<ActionIcon variant='subtle' color='gray' onClick={handleSignOut}>
-					<IconLogout size={18} />
-				</ActionIcon>
-			</Tooltip>
 			<Tabs
 				value={location.pathname.split('/')[3]}
 				onChange={v => {
@@ -82,6 +77,14 @@ export default function Tabbar(props: { refreshComponent?: () => void }) {
 						onModalOpen={onModalOpen}
 						onModalClose={onModalClose}
 					/>
+					<Menu.Divider />
+					<Menu.Item
+						color='red'
+						leftSection={<IconLogout size={16} />}
+						onClick={handleSignOut}
+					>
+						ログアウト
+					</Menu.Item>
 				</Menu.Dropdown>
 			</Menu>
 		</>
